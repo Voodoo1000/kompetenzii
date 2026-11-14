@@ -66,7 +66,7 @@ def create_book(
         title=book.title,
         description=book.description,
         price=book.price,
-        url=book.url,
+        url=str(book.url) if book.url else None,
         category_id=book.category_id
     )
 
@@ -94,10 +94,15 @@ def update_book(
                 detail="Категория не найдена"
             )
 
+    update_data = book.model_dump(exclude_unset=True)
+
+    if update_data.get("url") is not None:
+        update_data["url"] = str(update_data["url"])
+
     updated_book = crud.update_book(
         db=db,
         book_id=book_id,
-        **book.model_dump(exclude_unset=True)
+        **update_data
     )
 
     return updated_book
